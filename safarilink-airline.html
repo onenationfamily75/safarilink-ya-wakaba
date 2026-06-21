@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safarilink Airline Aviation — Regional Flights Across East Africa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --khaki:#3d3527; --khaki-deep:#28231a;
+  --orange:#d4622b; --orange-light:#e8825a;
+  --sky:#4a7c96; --sky-light:#7aa8bd;
+  --bone:#f7f3ea; --bone-dim:#ece5d4;
+  --charcoal:#241f17;
+  --green-go:#3c7a4f;
+  --radius:10px; --radius-lg:18px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bone);color:var(--charcoal);overflow-x:hidden}
+h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif}
+.mono{font-family:'Space Mono',monospace}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(40,35,26,0.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--bone);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em}
+.nav-logo .wing{color:var(--orange);font-size:1.5rem}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{color:rgba(247,243,234,0.8);text-decoration:none;font-size:0.88rem;font-weight:500;letter-spacing:0.02em;transition:color .2s}
+.nav-links a:hover{color:var(--orange-light)}
+.btn-wa-nav{background:#25D366;color:#0a3d1f !important;padding:9px 18px;border-radius:6px;font-weight:700 !important}
+.btn-book-nav{background:var(--orange);color:var(--bone) !important;padding:9px 22px;border-radius:6px;font-weight:700 !important;transition:background .2s}
+.btn-book-nav:hover{background:var(--orange-light) !important}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,var(--khaki-deep) 0%,var(--khaki) 55%,#4a4030 100%);overflow:hidden}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 85% 20%, rgba(212,98,43,0.18), transparent 45%),
+    radial-gradient(circle at 10% 80%, rgba(74,124,150,0.15), transparent 50%);
+}
+.hero-flightline{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,var(--orange) 0 24px, transparent 24px 48px);
+  opacity:0.4;
+}
+.hero-content{position:relative;z-index:2;padding:150px 48px 70px;max-width:1320px;margin:0 auto;width:100%}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--orange-light);font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:22px}
+.hero-eyebrow::before{content:'✈';font-size:0.95rem}
+.hero h1{font-size:clamp(2.6rem,5.6vw,4.8rem);color:var(--bone);font-weight:700;line-height:1.05;letter-spacing:-0.02em;margin-bottom:18px;max-width:880px}
+.hero h1 span{color:var(--orange-light)}
+.hero p{color:rgba(247,243,234,0.72);font-size:1.08rem;max-width:560px;line-height:1.7;margin-bottom:40px}
+
+/* BOOKING WIDGET — departure board styled */
+.booking-widget{background:var(--bone);border-radius:var(--radius-lg);padding:8px;box-shadow:0 30px 70px rgba(0,0,0,0.4);max-width:980px}
+.board-header{background:var(--khaki-deep);border-radius:14px 14px 0 0;padding:14px 24px;display:flex;align-items:center;gap:12px}
+.board-header .dot{width:9px;height:9px;border-radius:50%}
+.dot-r{background:#c0392b}.dot-y{background:#d4ac0d}.dot-g{background:var(--green-go)}
+.board-header .label{font-family:'Space Mono',monospace;color:var(--bone-dim);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;margin-left:8px}
+.trip-toggle{display:flex;gap:0;margin:18px 24px 0;background:var(--bone-dim);border-radius:30px;padding:4px;width:fit-content}
+.trip-btn{padding:8px 22px;border-radius:24px;border:none;font-family:'Inter';font-size:0.85rem;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--khaki)}
+.trip-btn.active{background:var(--khaki-deep);color:var(--bone)}
+.booking-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 24px 24px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--khaki)}
+.form-group label span{color:var(--orange)}
+.return-date-group{display:none}
+.return-date-group.show{display:flex}
+.form-control{border:2px solid var(--bone-dim);border-radius:var(--radius);padding:12px 16px;font-family:'Inter';font-size:0.95rem;color:var(--charcoal);background:#fff;transition:border .2s;outline:none;width:100%;appearance:none}
+.form-control:focus{border-color:var(--sky)}
+.btn-search{grid-column:1/-1;background:var(--orange);color:var(--bone);border:none;border-radius:var(--radius);padding:16px 32px;font-family:'Space Grotesk';font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:0.01em;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-search:hover{background:var(--orange-light);transform:translateY(-2px);box-shadow:0 10px 26px rgba(212,98,43,0.35)}
+
+/* STATS STRIP */
+.stats-bar{background:var(--khaki-deep);padding:26px 48px;display:flex;justify-content:center;gap:64px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.06)}
+.stat-num{font-family:'Space Grotesk';font-size:2.1rem;font-weight:700;color:var(--orange-light);line-height:1}
+.stat-label{font-family:'Space Mono',monospace;font-size:0.68rem;color:rgba(247,243,234,0.55);letter-spacing:0.1em;text-transform:uppercase;margin-top:5px;text-align:center}
+
+/* SECTIONS */
+.section{padding:84px 48px;max-width:1320px;margin:0 auto}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--orange);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.section-eyebrow::before{content:'';width:28px;height:2px;background:var(--orange)}
+.section-title{font-size:clamp(1.9rem,3.6vw,2.9rem);font-weight:700;color:var(--khaki-deep);letter-spacing:-0.01em;margin-bottom:12px}
+.section-sub{color:#5a5240;font-size:1rem;line-height:1.7;max-width:540px}
+
+/* DESTINATIONS */
+.dest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px}
+.dest-card{position:relative;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;height:270px;box-shadow:0 4px 18px rgba(0,0,0,0.1);transition:transform .3s}
+.dest-card:hover{transform:translateY(-5px)}
+.dest-card:nth-child(3n+1){grid-column:span 2;height:340px}
+.dest-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.dest-card:hover img{transform:scale(1.05)}
+.dest-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(36,31,23,0.9) 0%, transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:22px}
+.dest-code{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--orange-light);letter-spacing:0.1em;margin-bottom:4px}
+.dest-name{font-family:'Space Grotesk';font-size:1.7rem;color:var(--bone);font-weight:700}
+.dest-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.dest-price{font-size:0.82rem;color:rgba(247,243,234,0.78)}
+.dest-price strong{color:var(--orange-light);font-size:1rem}
+.dest-btn{background:var(--orange);color:var(--bone);border:none;padding:7px 16px;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer}
+.dest-btn:hover{background:var(--orange-light)}
+
+/* ROUTES — departure board list */
+.routes-section{background:var(--khaki-deep);padding:84px 48px}
+.routes-inner{max-width:1320px;margin:0 auto}
+.routes-section .section-title,.routes-section .section-sub{color:var(--bone)}
+.routes-section .section-sub{color:rgba(247,243,234,0.6)}
+.filter-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 8px}
+.filter-tab{padding:8px 20px;border-radius:30px;border:2px solid rgba(247,243,234,0.15);background:transparent;color:rgba(247,243,234,0.7);font-family:'Space Mono',monospace;font-size:0.76rem;font-weight:700;letter-spacing:0.04em;cursor:pointer;transition:all .2s}
+.filter-tab.active,.filter-tab:hover{background:var(--orange);border-color:var(--orange);color:var(--bone)}
+.board-list{margin-top:24px;border:1px solid rgba(247,243,234,0.1);border-radius:var(--radius-lg);overflow:hidden}
+.board-row-head{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 0.9fr 0.8fr;gap:12px;padding:14px 26px;background:rgba(0,0,0,0.25);font-family:'Space Mono',monospace;font-size:0.66rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(247,243,234,0.5)}
+.board-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 0.9fr 0.8fr;gap:12px;padding:18px 26px;align-items:center;border-top:1px solid rgba(247,243,234,0.07);transition:background .2s}
+.board-row:hover{background:rgba(247,243,234,0.04)}
+.board-route{font-family:'Space Grotesk';color:var(--bone);font-weight:600;font-size:1.02rem;display:flex;align-items:center;gap:10px}
+.board-route .flag{font-size:0.85rem}
+.board-cell{font-family:'Space Mono',monospace;font-size:0.82rem;color:rgba(247,243,234,0.75)}
+.board-class{font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;letter-spacing:0.04em}
+.cls-economy{background:rgba(74,124,150,0.2);color:var(--sky-light)}
+.cls-premium{background:rgba(212,98,43,0.2);color:var(--orange-light)}
+.board-fare{font-family:'Space Grotesk';color:var(--orange-light);font-weight:700;font-size:1.05rem}
+.btn-board-book{background:var(--orange);color:var(--bone);border:none;padding:8px 18px;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-board-book:hover{background:var(--orange-light)}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:46px}
+.feature-card{padding:30px 24px;background:#fff;border:1px solid var(--bone-dim);border-radius:var(--radius-lg);transition:transform .2s,box-shadow .2s}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,0.08)}
+.feature-icon{width:48px;height:48px;background:rgba(212,98,43,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+.feature-card h3{font-size:1.12rem;font-weight:700;color:var(--khaki-deep);margin-bottom:8px}
+.feature-card p{color:#6b6354;font-size:0.86rem;line-height:1.65}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(20,17,12,0.88);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bone);border-radius:var(--radius-lg);width:100%;max-width:860px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform .3s;box-shadow:0 40px 90px rgba(0,0,0,0.5)}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{background:var(--khaki-deep);padding:24px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.modal-title{font-family:'Space Grotesk';color:var(--bone);font-size:1.4rem;font-weight:700}
+.modal-route{color:var(--orange-light);font-family:'Space Mono',monospace;font-size:0.82rem;margin-top:3px}
+.modal-close{background:rgba(247,243,234,0.12);border:none;color:var(--bone);width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer}
+.modal-close:hover{background:rgba(247,243,234,0.25)}
+.modal-steps{display:flex;padding:18px 32px 0;border-bottom:1px solid var(--bone-dim)}
+.step-tab{flex:1;text-align:center;padding:12px 0;font-size:0.78rem;font-weight:600;color:#9a9180;cursor:pointer;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:7px}
+.step-tab.active{color:var(--khaki-deep);border-bottom-color:var(--orange)}
+.step-tab.done{color:var(--sky)}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:0.68rem;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--bone-dim);color:#9a9180}
+.step-tab.active .step-num{background:var(--orange);color:var(--bone)}
+.step-tab.done .step-num{background:var(--sky);color:var(--bone)}
+.modal-body{padding:32px}
+.step-panel{display:none}
+.step-panel.active{display:block}
+
+/* PLANE SEAT MAP */
+.plane-wrap{max-width:380px;margin:0 auto}
+.plane-nose{background:var(--khaki-deep);color:var(--orange-light);text-align:center;padding:12px;border-radius:50% 50% 14px 14px / 30px 30px 14px 14px;font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase}
+.plane-fuselage{background:#fff;border:2px solid var(--bone-dim);border-top:none;padding:20px 18px 24px}
+.seat-legend{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:#6b6354}
+.legend-box{width:18px;height:18px;border-radius:4px}
+.lb-avail{background:#e2eef3;border:2px solid var(--sky-light)}
+.lb-sel{background:var(--orange);border:2px solid var(--orange)}
+.lb-sold{background:#ddd6c5;border:2px dashed #b0a890}
+.cabin-label{text-align:center;font-family:'Space Mono',monospace;font-size:0.62rem;color:#9a9180;text-transform:uppercase;letter-spacing:0.1em;margin:14px 0 8px;border-top:1px dashed var(--bone-dim);padding-top:10px}
+.seat-grid-row{display:flex;gap:5px;justify-content:center;margin-bottom:5px}
+.aisle-gap{width:16px}
+.seat-btn{width:38px;height:38px;border-radius:7px 7px 4px 4px;border:2px solid var(--sky-light);background:#e2eef3;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:0.6rem;font-weight:700;color:#2b5870;transition:all .15s}
+.seat-btn:hover:not(.sold){background:rgba(212,98,43,0.15);border-color:var(--orange)}
+.seat-btn.selected{background:var(--orange) !important;border-color:var(--orange) !important;color:#fff !important}
+.seat-btn.sold{background:#ddd6c5;border:2px dashed #b0a890;cursor:not-allowed;color:#a89d85;font-size:0.5rem}
+.row-letter{width:18px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:0.62rem;color:#9a9180;font-weight:700}
+.selected-info{margin-top:16px;padding:12px 16px;background:rgba(212,98,43,0.06);border-radius:var(--radius);font-size:0.86rem;color:var(--khaki-deep);min-height:40px;text-align:center}
+
+/* PASSENGER FORM */
+.passenger-section{margin-bottom:26px}
+.passenger-section-title{font-family:'Space Grotesk';font-size:1.1rem;font-weight:700;color:var(--khaki-deep);border-bottom:2px solid var(--bone-dim);padding-bottom:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.passenger-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.p-group{display:flex;flex-direction:column;gap:6px}
+.p-group.full{grid-column:1/-1}
+.p-group label{font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b6354}
+.p-group input,.p-group select{border:2px solid var(--bone-dim);border-radius:8px;padding:11px 14px;font-family:'Inter';font-size:0.9rem;color:var(--charcoal);background:#fff;outline:none;transition:border .2s}
+.p-group input:focus,.p-group select:focus{border-color:var(--sky)}
+
+/* CONFIRM */
+.confirm-card{background:#fff;border-radius:var(--radius-lg);padding:26px;border:1px solid var(--bone-dim);margin-bottom:20px}
+.confirm-header{display:flex;align-items:center;gap:16px;margin-bottom:22px;padding-bottom:18px;border-bottom:2px solid var(--bone-dim)}
+.confirm-icon{width:56px;height:56px;background:rgba(212,98,43,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.confirm-title{font-family:'Space Grotesk';font-size:1.3rem;color:var(--khaki-deep);font-weight:700}
+.confirm-sub{font-size:0.84rem;color:#8a8270;margin-top:2px}
+.confirm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.confirm-item label{font-family:'Space Mono',monospace;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9a9180;display:block;margin-bottom:3px}
+.confirm-item span{font-size:0.92rem;font-weight:600;color:var(--charcoal)}
+.price-summary{background:var(--khaki-deep);color:var(--bone);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px}
+.price-line{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(247,243,234,0.1);font-size:0.88rem}
+.price-line:last-child{border:none}
+.price-line.total{font-family:'Space Grotesk';font-size:1.3rem;font-weight:700;color:var(--orange-light);padding-top:14px}
+.price-line .lbl{color:rgba(247,243,234,0.7)}
+
+/* ITINERARY TICKET */
+.itinerary-ticket{background:#fff;border-radius:var(--radius-lg);border:1px solid var(--bone-dim);overflow:hidden;margin-bottom:20px}
+.ticket-strip{background:var(--khaki-deep);padding:18px 26px;display:flex;justify-content:space-between;align-items:center}
+.ticket-strip .airline{font-family:'Space Grotesk';color:var(--bone);font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.ticket-strip .pnr{font-family:'Space Mono',monospace;color:var(--orange-light);font-size:0.95rem;letter-spacing:0.05em}
+.ticket-route-row{display:flex;align-items:center;justify-content:space-between;padding:26px 26px 18px}
+.ticket-city{text-align:center}
+.ticket-city .code{font-family:'Space Grotesk';font-size:2.2rem;font-weight:700;color:var(--khaki-deep);line-height:1}
+.ticket-city .city-name{font-size:0.78rem;color:#8a8270;margin-top:4px}
+.ticket-plane-divider{flex:1;display:flex;align-items:center;gap:8px;padding:0 18px;color:var(--orange)}
+.ticket-plane-divider .line{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--orange) 0 8px, transparent 8px 14px)}
+.ticket-details-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 26px 22px;border-bottom:1px dashed var(--bone-dim)}
+.tdg-item label{font-family:'Space Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.07em;color:#9a9180;display:block;margin-bottom:4px}
+.tdg-item span{font-size:0.92rem;font-weight:600;color:var(--charcoal)}
+.ticket-pax-list{padding:18px 26px}
+.ticket-pax-list h4{font-family:'Space Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:#9a9180;margin-bottom:10px}
+.pax-row{display:flex;justify-content:space-between;font-size:0.88rem;padding:6px 0;border-bottom:1px solid var(--bone-dim)}
+.pax-row:last-child{border:none}
+
+.success-screen{text-align:center;padding:36px 20px}
+.success-icon{font-size:3.6rem;margin-bottom:18px;display:block}
+.success-screen h2{font-size:1.9rem;color:var(--khaki-deep);font-weight:700;margin-bottom:10px}
+.success-screen p{color:#6b6354;font-size:0.94rem;line-height:1.7}
+
+.modal-actions{display:flex;justify-content:flex-end;gap:12px;padding:22px 32px;border-top:1px solid var(--bone-dim);position:sticky;bottom:0;background:var(--bone)}
+.btn-prev{background:transparent;border:2px solid var(--bone-dim);color:#6b6354;padding:12px 26px;border-radius:var(--radius);font-family:'Inter';font-size:0.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-prev:hover{border-color:var(--khaki);color:var(--khaki)}
+.btn-next{background:var(--orange);color:var(--bone);border:none;padding:12px 30px;border-radius:var(--radius);font-family:'Space Grotesk';font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-next:hover{background:var(--orange-light)}
+
+/* FOOTER */
+footer{background:var(--khaki-deep);padding:56px 48px 30px;color:rgba(247,243,234,0.65)}
+.footer-inner{max-width:1320px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.footer-logo{font-family:'Space Grotesk';font-size:1.5rem;color:var(--bone);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.footer-logo .wing{color:var(--orange-light)}
+.footer-desc{font-size:0.86rem;line-height:1.7;max-width:280px}
+.footer-col h4{color:var(--bone);font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col a{color:rgba(247,243,234,0.55);text-decoration:none;font-size:0.86rem}
+.footer-col a:hover{color:var(--orange-light)}
+.footer-bottom{border-top:1px solid rgba(247,243,234,0.1);padding-top:22px;display:flex;justify-content:space-between;font-size:0.78rem;flex-wrap:wrap;gap:10px}
+
+.whatsapp-float{position:fixed;bottom:26px;right:26px;z-index:150;width:58px;height:58px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;text-decoration:none;box-shadow:0 6px 22px rgba(37,211,102,0.45);transition:transform .25s}
+.whatsapp-float:hover{transform:scale(1.1)}
+
+@media (max-width:1024px){
+  .dest-grid{grid-template-columns:repeat(2,1fr)}
+  .dest-card:nth-child(3n+1){grid-column:span 1;height:270px}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .board-row-head,.board-row{grid-template-columns:1.4fr 1fr 1fr 0.9fr;font-size:0.8rem}
+  .board-row-head span:nth-child(3),.board-row .board-cell:nth-child(3){display:none}
+}
+@media (max-width:768px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .hero-content{padding:110px 20px 40px}
+  .booking-form{grid-template-columns:1fr}
+  .section{padding:50px 20px}
+  .routes-section{padding:50px 20px}
+  .dest-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .stats-bar{padding:20px;gap:30px}
+  footer{padding:40px 20px 22px}
+  .footer-grid{grid-template-columns:1fr;gap:26px}
+  .passenger-grid,.confirm-grid,.ticket-details-grid{grid-template-columns:1fr}
+  .modal-body{padding:18px}
+  .modal-actions{padding:16px 18px}
+  .board-row-head{display:none}
+  .board-row{grid-template-columns:1fr;gap:8px;text-align:left}
+  .ticket-route-row{flex-direction:column;gap:14px}
+  .ticket-plane-divider{width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a class="nav-logo" href="#"><span class="wing">✈</span>Safarilink Airline <span style="font-weight:400;color:rgba(247,243,234,.7)">Aviation</span></a>
+  <div class="nav-links">
+    <a href="#destinations">Destinations</a>
+    <a href="#routes">Routes & Fares</a>
+    <a href="#fleet">Fleet</a>
+    <a href="https://wa.me/254782431525" target="_blank" class="btn-wa-nav">💬 WhatsApp</a>
+    <a href="#" class="btn-book-nav" onclick="openModal('Nairobi','Mombasa')">Book a Flight</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-flightline"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Regional Aviation · Kenya · Uganda · Tanzania</div>
+    <h1>Fly above the<br>traffic, not <span>around it</span>.</h1>
+    <p>Scheduled and chartered flights linking East Africa's cities, coastlines, and safari airstrips. Book a seat in minutes, get your itinerary on WhatsApp instantly.</p>
+
+    <div class="booking-widget">
+      <div class="board-header">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        <span class="label">Flight Search Terminal</span>
+      </div>
+      <div class="trip-toggle">
+        <button class="trip-btn active" id="btnOneWay" onclick="setTrip('one-way')">One Way</button>
+        <button class="trip-btn" id="btnRound" onclick="setTrip('round-trip')">Round Trip</button>
+      </div>
+      <div class="booking-form">
+        <div class="form-group">
+          <label>From <span>*</span></label>
+          <select class="form-control" id="fromCity">
+            <option value="">Select departure</option>
+            <optgroup label="Kenya">
+              <option>Nairobi</option><option>Mombasa</option><option>Lamu</option><option>Malindi</option>
+              <option>Diani</option><option>Kisumu</option><option>Eldoret</option><option>Nanyuki</option>
+              <option>Maasai Mara</option><option>Amboseli</option><option>Samburu</option>
+            </optgroup>
+            <optgroup label="Uganda"><option>Entebbe</option><option>Kampala</option></optgroup>
+            <optgroup label="Tanzania"><option>Zanzibar</option><option>Arusha</option><option>Dar es Salaam</option><option>Kilimanjaro</option></optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>To <span>*</span></label>
+          <select class="form-control" id="toCity">
+            <option value="">Select destination</option>
+            <optgroup label="Kenya">
+              <option>Nairobi</option><option>Mombasa</option><option>Lamu</option><option>Malindi</option>
+              <option>Diani</option><option>Kisumu</option><option>Eldoret</option><option>Nanyuki</option>
+              <option>Maasai Mara</option><option>Amboseli</option><option>Samburu</option>
+            </optgroup>
+            <optgroup label="Uganda"><option>Entebbe</option><option>Kampala</option></optgroup>
+            <optgroup label="Tanzania"><option>Zanzibar</option><option>Arusha</option><option>Dar es Salaam</option><option>Kilimanjaro</option></optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Departure Date <span>*</span></label>
+          <input type="date" class="form-control" id="departDate" min="">
+        </div>
+        <div class="form-group return-date-group" id="returnDateGroup">
+          <label>Return Date <span>*</span></label>
+          <input type="date" class="form-control" id="returnDate" min="">
+        </div>
+        <div class="form-group">
+          <label>Passengers <span>*</span></label>
+          <select class="form-control" id="numPassengers">
+            <option value="1">1 Passenger</option><option value="2">2 Passengers</option>
+            <option value="3">3 Passengers</option><option value="4">4 Passengers</option>
+            <option value="5">5 Passengers</option><option value="6">6 Passengers</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Class</label>
+          <select class="form-control" id="travelClass">
+            <option value="economy">Economy</option>
+            <option value="premium">Premium</option>
+          </select>
+        </div>
+        <button class="btn-search" onclick="searchFlights()">🔍 Search Flights</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div><div class="stat-num">12+</div><div class="stat-label">Years Flying</div></div>
+  <div><div class="stat-num">28</div><div class="stat-label">Routes</div></div>
+  <div><div class="stat-num">18</div><div class="stat-label">Airstrips & Airports</div></div>
+  <div><div class="stat-num">3</div><div class="stat-label">Countries</div></div>
+  <div><div class="stat-num">99.2%</div><div class="stat-label">On-Time Rate</div></div>
+</div>
+
+<div id="destinations">
+  <div class="section">
+    <div class="section-eyebrow">Where We Fly</div>
+    <h2 class="section-title">Popular Destinations</h2>
+    <p class="section-sub">From coastal runways to bush airstrips beside the savanna — book direct flights across the region.</p>
+    <div class="dest-grid" id="destinationsGrid"></div>
+  </div>
+</div>
+
+<div class="routes-section" id="routes">
+  <div class="routes-inner">
+    <div class="section-eyebrow">Departure Board</div>
+    <h2 class="section-title">Routes & Fares</h2>
+    <p class="section-sub">All scheduled routes across Kenya, Uganda and Tanzania. Filter by country and book in seconds.</p>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterRoutes('all',this)">All Routes</button>
+      <button class="filter-tab" onclick="filterRoutes('kenya',this)">Kenya</button>
+      <button class="filter-tab" onclick="filterRoutes('uganda',this)">Uganda</button>
+      <button class="filter-tab" onclick="filterRoutes('tanzania',this)">Tanzania</button>
+    </div>
+    <div class="board-list">
+      <div class="board-row-head">
+        <span>Route</span><span>Duration</span><span>Departs</span><span>Class</span><span>Fare</span><span></span>
+      </div>
+      <div id="boardListBody"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="fleet">
+  <div class="section-eyebrow">Why Fly With Us</div>
+  <h2 class="section-title">Built for the Region</h2>
+  <p class="section-sub">Light aircraft and regional jets, configured for the routes East Africa actually needs.</p>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">🛫</div><h3>Short-Strip Capable</h3><p>Our fleet lands on grass and gravel airstrips at Mara, Amboseli, and Samburu — no paved runway required.</p></div>
+    <div class="feature-card"><div class="feature-icon">🧳</div><h3>20kg Baggage</h3><p>Generous baggage allowance on every fare class, with soft-bag priority for bush destinations.</p></div>
+    <div class="feature-card"><div class="feature-icon">📲</div><h3>Instant E-Ticket</h3><p>Your itinerary lands in your WhatsApp the moment you confirm — no waiting on email.</p></div>
+    <div class="feature-card"><div class="feature-icon">🌍</div><h3>Cross-Border Connections</h3><p>Same-day connections between Nairobi, Entebbe, Zanzibar and Arusha without backtracking.</p></div>
+    <div class="feature-card"><div class="feature-icon">🎒</div><h3>Charter on Request</h3><p>Need a private flight for a group or film crew? Message us directly and we'll quote within the hour.</p></div>
+    <div class="feature-card"><div class="feature-icon">🕐</div><h3>Real Departure Times</h3><p>Flights run to the schedule shown — not an approximation. Delays are announced same-day on WhatsApp.</p></div>
+    <div class="feature-card"><div class="feature-icon">💳</div><h3>Flexible Payment</h3><p>Pay via M-Pesa, bank transfer, or card. Confirm your seat first, settle payment within 2 hours.</p></div>
+    <div class="feature-card"><div class="feature-icon">🛟</div><h3>24/7 Ops Desk</h3><p>A live operations contact on WhatsApp for schedule changes, weather holds, or itinerary edits.</p></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><span class="wing">✈</span>Safarilink Airline Aviation</div>
+        <p class="footer-desc">Regional scheduled and chartered flights connecting Kenya, Uganda and Tanzania. Built for travelers who'd rather be airborne.</p>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+          <a href="tel:+254782431525" style="background:rgba(247,243,234,0.08);padding:8px 16px;border-radius:6px;color:var(--bone);text-decoration:none;font-size:0.8rem">📞 +254 782 431 525</a>
+          <a href="https://wa.me/254782431525" target="_blank" style="background:#25D366;padding:8px 16px;border-radius:6px;color:#0a3d1f;text-decoration:none;font-size:0.8rem;font-weight:700">💬 WhatsApp</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Kenya Routes</h4><ul>
+        <li><a href="#">Nairobi ↔ Mombasa</a></li><li><a href="#">Nairobi ↔ Lamu</a></li>
+        <li><a href="#">Nairobi ↔ Maasai Mara</a></li><li><a href="#">Nairobi ↔ Diani</a></li>
+        <li><a href="#">Nairobi ↔ Amboseli</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Regional</h4><ul>
+        <li><a href="#">Nairobi ↔ Entebbe</a></li><li><a href="#">Nairobi ↔ Zanzibar</a></li>
+        <li><a href="#">Mombasa ↔ Zanzibar</a></li><li><a href="#">Nairobi ↔ Kilimanjaro</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Help</h4><ul>
+        <li><a href="#">Manage Booking</a></li><li><a href="#">Baggage Policy</a></li>
+        <li><a href="#">Charter Flights</a></li><li><a href="#">Contact Ops Desk</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Safarilink Airline Aviation Ltd. Wilson Airport, Nairobi.</span>
+      <span><a href="#" style="color:var(--orange-light);text-decoration:none">Privacy</a> · <a href="#" style="color:var(--orange-light);text-decoration:none">Terms</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Book Your Flight</div>
+        <div class="modal-route mono" id="modalRoute">Select your seat and passenger details</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-steps">
+      <div class="step-tab active" id="tab1"><div class="step-num">1</div>Select Seat</div>
+      <div class="step-tab" id="tab2"><div class="step-num">2</div>Passengers</div>
+      <div class="step-tab" id="tab3"><div class="step-num">3</div>Confirm</div>
+      <div class="step-tab" id="tab4"><div class="step-num">4</div>Itinerary</div>
+    </div>
+    <div class="modal-body">
+      <!-- STEP 1: SEAT MAP -->
+      <div class="step-panel active" id="step1">
+        <div class="plane-wrap">
+          <div class="plane-nose">✈ Safarilink Airline — 18 Seat Aircraft</div>
+          <div class="plane-fuselage">
+            <div class="seat-legend">
+              <div class="legend-item"><div class="legend-box lb-avail"></div>Available</div>
+              <div class="legend-item"><div class="legend-box lb-sel"></div>Selected</div>
+              <div class="legend-item"><div class="legend-box lb-sold"></div>Sold</div>
+            </div>
+            <div class="cabin-label">Cockpit →</div>
+            <div id="planeSeatGrid"></div>
+          </div>
+        </div>
+        <div class="selected-info" id="selectedInfo">Select your seat(s) to continue.</div>
+      </div>
+      <!-- STEP 2: PASSENGERS -->
+      <div class="step-panel" id="step2">
+        <div id="passengerFormsContainer"></div>
+      </div>
+      <!-- STEP 3: CONFIRM -->
+      <div class="step-panel" id="step3">
+        <div class="confirm-card">
+          <div class="confirm-header">
+            <div class="confirm-icon">🎫</div>
+            <div><div class="confirm-title">Review Your Booking</div><div class="confirm-sub">Check details before confirming</div></div>
+          </div>
+          <div class="confirm-grid">
+            <div class="confirm-item"><label>From</label><span id="c-from">—</span></div>
+            <div class="confirm-item"><label>To</label><span id="c-to">—</span></div>
+            <div class="confirm-item"><label>Departure Date</label><span id="c-date">—</span></div>
+            <div class="confirm-item"><label>Trip Type</label><span id="c-triptype">—</span></div>
+            <div class="confirm-item"><label>Class</label><span id="c-class">—</span></div>
+            <div class="confirm-item"><label>Seats</label><span id="c-seats">—</span></div>
+            <div class="confirm-item"><label>Passengers</label><span id="c-pax">—</span></div>
+            <div class="confirm-item"><label>Lead Passenger</label><span id="c-name">—</span></div>
+          </div>
+        </div>
+        <div class="price-summary" id="priceSummary"></div>
+      </div>
+      <!-- STEP 4: ITINERARY / SUCCESS -->
+      <div class="step-panel" id="step4">
+        <div class="success-screen" style="padding-bottom:8px">
+          <span class="success-icon">🎉</span>
+          <h2>Booking Confirmed</h2>
+          <p>Your itinerary is below. WhatsApp is opening now with the full confirmation.</p>
+        </div>
+        <div class="itinerary-ticket" id="itineraryTicket"></div>
+        <div style="text-align:center">
+          <button class="btn-prev" onclick="closeModal()">Close & Book Another</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions" id="modalActions">
+      <button class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none">← Back</button>
+      <button id="btnNext" onclick="nextStep()" class="btn-next">Continue → Select Seat</button>
+    </div>
+  </div>
+</div>
+
+<a class="whatsapp-float" href="https://wa.me/254782431525?text=Hello%20Safari%20Wing%20Aviation%2C%20I%20would%20like%20to%20book%20a%20flight." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+
+<script>
+// ─── ROUTE DATA ───
+const allRoutes = [
+  // Kenya
+  { from:'Nairobi', to:'Mombasa', region:'kenya', duration:'1h 05m', times:'06:30, 10:00, 15:00, 18:30', cls:'premium', fare:9500 },
+  { from:'Nairobi', to:'Lamu', region:'kenya', duration:'1h 30m', times:'07:00, 14:00', cls:'premium', fare:12500 },
+  { from:'Nairobi', to:'Malindi', region:'kenya', duration:'1h 10m', times:'08:00, 16:00', cls:'economy', fare:11000 },
+  { from:'Nairobi', to:'Diani', region:'kenya', duration:'1h 15m', times:'07:30, 13:00, 17:00', cls:'premium', fare:10500 },
+  { from:'Nairobi', to:'Kisumu', region:'kenya', duration:'0h 50m', times:'06:00, 12:00, 18:00', cls:'economy', fare:8000 },
+  { from:'Nairobi', to:'Eldoret', region:'kenya', duration:'0h 45m', times:'07:00, 17:00', cls:'economy', fare:7500 },
+  { from:'Nairobi', to:'Nanyuki', region:'kenya', duration:'0h 40m', times:'08:30, 15:30', cls:'economy', fare:7000 },
+  { from:'Nairobi', to:'Maasai Mara', region:'kenya', duration:'0h 45m', times:'06:45, 09:30, 14:00', cls:'premium', fare:14000 },
+  { from:'Nairobi', to:'Amboseli', region:'kenya', duration:'0h 35m', times:'07:15, 12:30', cls:'premium', fare:12000 },
+  { from:'Nairobi', to:'Samburu', region:'kenya', duration:'0h 55m', times:'08:00, 14:30', cls:'premium', fare:13500 },
+  { from:'Mombasa', to:'Lamu', region:'kenya', duration:'0h 40m', times:'09:00, 16:00', cls:'economy', fare:8500 },
+  { from:'Mombasa', to:'Diani', region:'kenya', duration:'0h 20m', times:'10:00, 15:00', cls:'economy', fare:5500 },
+  // Uganda
+  { from:'Nairobi', to:'Entebbe', region:'uganda', duration:'1h 20m', times:'07:00, 13:00, 19:00', cls:'premium', fare:16000 },
+  { from:'Nairobi', to:'Kampala', region:'uganda', duration:'1h 25m', times:'08:00, 17:00', cls:'premium', fare:16500 },
+  { from:'Mombasa', to:'Entebbe', region:'uganda', duration:'1h 55m', times:'09:30', cls:'premium', fare:19000 },
+  // Tanzania
+  { from:'Nairobi', to:'Zanzibar', region:'tanzania', duration:'1h 40m', times:'07:30, 14:00', cls:'premium', fare:18500 },
+  { from:'Nairobi', to:'Arusha', region:'tanzania', duration:'1h 10m', times:'08:15, 16:30', cls:'economy', fare:13000 },
+  { from:'Nairobi', to:'Dar es Salaam', region:'tanzania', duration:'1h 50m', times:'06:30, 15:00', cls:'premium', fare:20000 },
+  { from:'Nairobi', to:'Kilimanjaro', region:'tanzania', duration:'1h 05m', times:'09:00, 17:30', cls:'economy', fare:14500 },
+  { from:'Mombasa', to:'Zanzibar', region:'tanzania', duration:'1h 15m', times:'11:00', cls:'premium', fare:17000 },
+  { from:'Arusha', to:'Zanzibar', region:'tanzania', duration:'1h 30m', times:'10:30', cls:'premium', fare:16000 },
+];
+
+const routeFaresMap = {};
+allRoutes.forEach(r => {
+  routeFaresMap[`${r.from}-${r.to}`] = r.fare;
+  routeFaresMap[`${r.to}-${r.from}`] = r.fare;
+});
+const classFares = { economy: 8000, premium: 13000 };
+const regionLabel = { kenya:'Kenya', uganda:'Uganda', tanzania:'Tanzania' };
+
+// ─── SEAT MAP: 18-seat light aircraft, 2-1 single-aisle layout, rows 1-9, letters A,B / C ───
+const seatRows = 9;
+const soldSeats = new Set(['1A','1C','2B','3A','4C','5A','5B','6C','7A']);
+let selectedSeats = [];
+let currentStep = 1;
+let tripType = 'one-way';
+let bookingData = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('departDate').min = today;
+  document.getElementById('returnDate').min = today;
+  document.getElementById('departDate').value = today;
+  buildDestinations();
+  buildBoardList('all');
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').style.background = window.scrollY > 60 ? 'rgba(40,35,26,0.98)' : 'rgba(40,35,26,0.92)';
+});
+
+// ─── DESTINATIONS ───
+const destinations = [
+  { name:'Maasai Mara', country:'Kenya', price:'KES 14,000', img:'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=800&q=80' },
+  { name:'Mombasa', country:'Kenya', price:'KES 9,500', img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80' },
+  { name:'Zanzibar', country:'Tanzania', price:'KES 18,500', img:'https://images.unsplash.com/photo-1572331165267-854da2b10ccb?w=800&q=80' },
+  { name:'Lamu', country:'Kenya', price:'KES 12,500', img:'https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&q=80' },
+  { name:'Entebbe', country:'Uganda', price:'KES 16,000', img:'https://images.unsplash.com/photo-1623934199716-7924ddb70b15?w=800&q=80' },
+  { name:'Amboseli', country:'Kenya', price:'KES 12,000', img:'https://images.unsplash.com/photo-1535941339077-2dd1c7963098?w=800&q=80' },
+  { name:'Arusha', country:'Tanzania', price:'KES 13,000', img:'https://images.unsplash.com/photo-1589553416260-f586c8f1514f?w=800&q=80' },
+  { name:'Diani', country:'Kenya', price:'KES 10,500', img:'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=800&q=80' },
+];
+
+function buildDestinations() {
+  const grid = document.getElementById('destinationsGrid');
+  grid.innerHTML = '';
+  destinations.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'dest-card';
+    card.innerHTML = `<img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=800&q=80'">
+      <div class="dest-overlay">
+        <div class="dest-code">${d.country}</div>
+        <div class="dest-name">${d.name}</div>
+        <div class="dest-foot">
+          <span class="dest-price">From <strong>${d.price}</strong></span>
+          <button class="dest-btn" onclick="quickBook('${d.name}')">Book</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── BOARD LIST (routes) ───
+function buildBoardList(filter) {
+  const body = document.getElementById('boardListBody');
+  body.innerHTML = '';
+  const filtered = filter === 'all' ? allRoutes : allRoutes.filter(r => r.region === filter);
+  filtered.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'board-row';
+    const clsBadge = r.cls === 'premium' ? 'cls-premium' : 'cls-economy';
+    const clsLabel = r.cls.charAt(0).toUpperCase() + r.cls.slice(1);
+    row.innerHTML = `
+      <div class="board-route"><span>${r.from}</span><span style="color:var(--orange)">→</span><span>${r.to}</span></div>
+      <div class="board-cell">${r.duration}</div>
+      <div class="board-cell">${r.times}</div>
+      <div><span class="board-class ${clsBadge}">${clsLabel}</span></div>
+      <div class="board-fare">KES ${r.fare.toLocaleString()}</div>
+      <div><button class="btn-board-book" onclick="openModal('${r.from}','${r.to}')">Book</button></div>`;
+    body.appendChild(row);
+  });
+}
+function filterRoutes(region, btn) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  buildBoardList(region);
+}
+
+// ─── SEAT MAP ───
+function buildSeatMap() {
+  const grid = document.getElementById('planeSeatGrid');
+  grid.innerHTML = '';
+  for (let r = 1; r <= seatRows; r++) {
+    const row = document.createElement('div');
+    row.className = 'seat-grid-row';
+    const letter = document.createElement('div');
+    letter.className = 'row-letter';
+    letter.textContent = r;
+    row.appendChild(letter);
+    ['A','B'].forEach(col => row.appendChild(makeSeat(`${r}${col}`)));
+    const gap = document.createElement('div');
+    gap.className = 'aisle-gap';
+    row.appendChild(gap);
+    row.appendChild(makeSeat(`${r}C`));
+    grid.appendChild(row);
+  }
+}
+function makeSeat(id) {
+  const sold = soldSeats.has(id);
+  const btn = document.createElement('button');
+  btn.className = 'seat-btn' + (sold ? ' sold' : '');
+  btn.textContent = sold ? '×' : id;
+  btn.id = 'seat-' + id;
+  if (!sold) btn.onclick = () => toggleSeat(id);
+  else btn.disabled = true;
+  return btn;
+}
+function toggleSeat(id) {
+  const req = bookingData.passengers || 1;
+  const el = document.getElementById('seat-' + id);
+  if (!el || el.classList.contains('sold')) return;
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    selectedSeats = selectedSeats.filter(s => s !== id);
+  } else {
+    if (selectedSeats.length >= req) {
+      const oldest = selectedSeats.shift();
+      document.getElementById('seat-' + oldest)?.classList.remove('selected');
+    }
+    el.classList.add('selected');
+    selectedSeats.push(id);
+  }
+  updateSeatInfo();
+}
+function updateSeatInfo() {
+  const req = bookingData.passengers || 1;
+  const info = document.getElementById('selectedInfo');
+  info.innerHTML = selectedSeats.length === 0
+    ? `Select <strong>${req}</strong> seat(s) to continue.`
+    : `Selected: <strong>${selectedSeats.join(', ')}</strong> (${selectedSeats.length}/${req})`;
+}
+
+// ─── TRIP / SEARCH ───
+function setTrip(type) {
+  tripType = type;
+  document.getElementById('btnOneWay').classList.toggle('active', type==='one-way');
+  document.getElementById('btnRound').classList.toggle('active', type==='round-trip');
+  document.getElementById('returnDateGroup').classList.toggle('show', type==='round-trip');
+}
+function searchFlights() {
+  const from = document.getElementById('fromCity').value;
+  const to = document.getElementById('toCity').value;
+  const date = document.getElementById('departDate').value;
+  if (!from || !to) { alert('Please select departure and destination cities.'); return; }
+  if (from === to) { alert('Departure and destination must be different.'); return; }
+  if (!date) { alert('Please select a departure date.'); return; }
+  openModal(from, to);
+}
+function quickBook(dest) { openModal('Nairobi', dest); }
+
+// ─── MODAL ───
+function openModal(from, to) {
+  const resolvedFrom = from || document.getElementById('fromCity').value || 'Nairobi';
+  const resolvedTo   = to   || document.getElementById('toCity').value   || 'Mombasa';
+  bookingData = {
+    from: resolvedFrom, to: resolvedTo,
+    date: document.getElementById('departDate').value,
+    returnDate: document.getElementById('returnDate').value,
+    passengers: parseInt(document.getElementById('numPassengers').value) || 1,
+    cls: document.getElementById('travelClass').value || 'economy',
+    tripType: tripType,
+  };
+  document.getElementById('modalRoute').textContent = `${bookingData.from} → ${bookingData.to}`;
+  selectedSeats = [];
+  buildSeatMap();
+  goToStep(1);
+  document.getElementById('bookingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('bookingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('bookingModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+function goToStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step-panel').forEach((p,i) => p.classList.toggle('active', i === n-1));
+  document.querySelectorAll('.step-tab').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i === n-1) t.classList.add('active');
+    else if (i < n-1) t.classList.add('done');
+  });
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const actions = document.getElementById('modalActions');
+  if (n === 4) { actions.style.display = 'none'; return; }
+  actions.style.display = 'flex';
+  btnPrev.style.display = n > 1 ? 'block' : 'none';
+  const labels = ['', 'Continue → Passengers', 'Review Booking →', 'Confirm & Generate Itinerary'];
+  btnNext.textContent = labels[n];
+  if (n === 1) updateSeatInfo();
+  if (n === 3) buildConfirmation();
+}
+function nextStep() {
+  if (currentStep === 1) {
+    if (selectedSeats.length < bookingData.passengers) {
+      alert(`Please select ${bookingData.passengers} seat(s). You've selected ${selectedSeats.length}.`);
+      return;
+    }
+    buildPassengerForms();
+    goToStep(2);
+  } else if (currentStep === 2) {
+    if (!validatePassengerForms()) return;
+    goToStep(3);
+  } else if (currentStep === 3) {
+    confirmBooking();
+  }
+}
+function prevStep() { if (currentStep > 1) goToStep(currentStep - 1); }
+
+// ─── PASSENGER FORMS ───
+function buildPassengerForms() {
+  const container = document.getElementById('passengerFormsContainer');
+  container.innerHTML = '';
+  for (let i = 0; i < bookingData.passengers; i++) {
+    const sec = document.createElement('div');
+    sec.className = 'passenger-section';
+    sec.innerHTML = `
+      <div class="passenger-section-title"><span>🧍</span> Passenger ${i+1} ${i===0?'(Lead)':''} — Seat ${selectedSeats[i]||'?'}</div>
+      <div class="passenger-grid">
+        <div class="p-group"><label>First Name *</label><input type="text" class="pax-firstname" placeholder="e.g. Amani" required></div>
+        <div class="p-group"><label>Last Name *</label><input type="text" class="pax-lastname" placeholder="e.g. Otieno" required></div>
+        <div class="p-group"><label>ID / Passport No *</label><input type="text" class="pax-id" placeholder="National ID or Passport" required></div>
+        <div class="p-group"><label>Phone Number *</label><input type="tel" class="pax-phone" placeholder="+254 7XX XXX XXX" required></div>
+        ${i===0 ? '<div class="p-group full"><label>Email Address</label><input type="email" class="pax-email" placeholder="ticket@email.com"></div>' : ''}
+      </div>`;
+    container.appendChild(sec);
+  }
+}
+function validatePassengerForms() {
+  const required = document.querySelectorAll('#step2 [required]');
+  for (const el of required) {
+    if (!el.value.trim()) {
+      el.focus(); el.style.borderColor = '#d4622b';
+      setTimeout(() => el.style.borderColor = '', 2000);
+      alert('Please fill in all required fields.');
+      return false;
+    }
+  }
+  return true;
+}
+
+// ─── CONFIRMATION ───
+function getFare() {
+  const key = `${bookingData.from}-${bookingData.to}`;
+  return routeFaresMap[key] || classFares[bookingData.cls] || 9000;
+}
+function buildConfirmation() {
+  const seatFare = getFare();
+  const pax = bookingData.passengers;
+  const totalFare = seatFare * pax;
+  const returnFare = bookingData.tripType === 'round-trip' ? totalFare : 0;
+  const grandTotal = totalFare + returnFare;
+  const firstName = document.querySelector('#step2 .pax-firstname')?.value || '—';
+  const lastName = document.querySelector('#step2 .pax-lastname')?.value || '';
+  document.getElementById('c-from').textContent = bookingData.from;
+  document.getElementById('c-to').textContent = bookingData.to;
+  document.getElementById('c-date').textContent = bookingData.date ? new Date(bookingData.date).toDateString() : '—';
+  document.getElementById('c-triptype').textContent = bookingData.tripType === 'round-trip' ? 'Round Trip' : 'One Way';
+  document.getElementById('c-class').textContent = bookingData.cls.charAt(0).toUpperCase() + bookingData.cls.slice(1);
+  document.getElementById('c-seats').textContent = selectedSeats.join(', ');
+  document.getElementById('c-pax').textContent = pax + ' passenger(s)';
+  document.getElementById('c-name').textContent = firstName + ' ' + lastName;
+  document.getElementById('priceSummary').innerHTML = `
+    <div class="price-line"><span class="lbl">Fare per seat</span><span>KES ${seatFare.toLocaleString()}</span></div>
+    <div class="price-line"><span class="lbl">Passengers × ${pax}</span><span>KES ${totalFare.toLocaleString()}</span></div>
+    ${returnFare ? `<div class="price-line"><span class="lbl">Return flight</span><span>KES ${returnFare.toLocaleString()}</span></div>` : ''}
+    <div class="price-line total"><span class="lbl">Total</span><span>KES ${grandTotal.toLocaleString()}</span></div>`;
+}
+
+// ─── ITINERARY GENERATOR ───
+function buildItinerary(ref, passengers) {
+  const seatFare = getFare();
+  const pax = bookingData.passengers;
+  const totalFare = seatFare * pax;
+  const dateStr = bookingData.date ? new Date(bookingData.date).toDateString() : 'TBC';
+  const fromCode = bookingData.from.slice(0,3).toUpperCase();
+  const toCode = bookingData.to.slice(0,3).toUpperCase();
+  const clsLabel = bookingData.cls.charAt(0).toUpperCase() + bookingData.cls.slice(1);
+
+  const paxRows = passengers.map((p,i) =>
+    `<div class="pax-row"><span>${p.first} ${p.last}</span><span class="mono">Seat ${selectedSeats[i]||'-'}</span></div>`
+  ).join('');
+
+  document.getElementById('itineraryTicket').innerHTML = `
+    <div class="ticket-strip">
+      <div class="airline">✈ Safarilink Airline Aviation</div>
+      <div class="pnr">PNR ${ref}</div>
+    </div>
+    <div class="ticket-route-row">
+      <div class="ticket-city"><div class="code">${fromCode}</div><div class="city-name">${bookingData.from}</div></div>
+      <div class="ticket-plane-divider"><div class="line"></div>✈<div class="line"></div></div>
+      <div class="ticket-city"><div class="code">${toCode}</div><div class="city-name">${bookingData.to}</div></div>
+    </div>
+    <div class="ticket-details-grid">
+      <div class="tdg-item"><label>Date</label><span>${dateStr}</span></div>
+      <div class="tdg-item"><label>Class</label><span>${clsLabel}</span></div>
+      <div class="tdg-item"><label>Trip</label><span>${bookingData.tripType === 'round-trip' ? 'Round Trip' : 'One Way'}</span></div>
+      <div class="tdg-item"><label>Total Fare</label><span>KES ${totalFare.toLocaleString()}</span></div>
+    </div>
+    <div class="ticket-pax-list">
+      <h4>Passengers & Seats</h4>
+      ${paxRows}
+    </div>`;
+}
+
+// ─── CONFIRM + WHATSAPP ───
+function confirmBooking() {
+  const ref = 'SW-' + Math.random().toString(36).substr(2,6).toUpperCase();
+  document.querySelectorAll('.step-tab').forEach(t => { t.classList.remove('active'); t.classList.add('done'); });
+
+  const passengerEls = document.querySelectorAll('#step2 .passenger-section');
+  const passengers = Array.from(passengerEls).map(sec => ({
+    first: sec.querySelector('.pax-firstname')?.value || '',
+    last: sec.querySelector('.pax-lastname')?.value || '',
+    id: sec.querySelector('.pax-id')?.value || '',
+    phone: sec.querySelector('.pax-phone')?.value || '',
+  }));
+  const email = document.querySelector('#step2 .pax-email')?.value || '';
+
+  const seatFare = getFare();
+  const pax = bookingData.passengers;
+  const totalFare = seatFare * pax;
+  const returnFare = bookingData.tripType === 'round-trip' ? totalFare : 0;
+  const grandTotal = totalFare + returnFare;
+  const dateStr = bookingData.date ? new Date(bookingData.date).toDateString() : 'Not set';
+  const clsLabel = bookingData.cls.charAt(0).toUpperCase() + bookingData.cls.slice(1);
+  const tripLabel = bookingData.tripType === 'round-trip' ? 'Round Trip' : 'One Way';
+  const returnLine = (bookingData.tripType === 'round-trip' && bookingData.returnDate)
+    ? '\nReturn Date: ' + new Date(bookingData.returnDate).toDateString() : '';
+  const returnFareLine = returnFare ? '\nReturn Fare: KES ' + returnFare.toLocaleString() : '';
+  const emailLine = email ? '\nEmail: ' + email : '';
+
+  const paxLines = passengers.map((p,i) =>
+    'Passenger ' + (i+1) + ': ' + p.first + ' ' + p.last + ' - Seat ' + (selectedSeats[i]||'-') + ' - ID ' + p.id
+  ).join('\n');
+
+  const lines = [
+    'SAFARILINK AIRLINE AVIATION - FLIGHT BOOKING CONFIRMATION',
+    '',
+    'PNR: ' + ref,
+    'Route: ' + bookingData.from + ' to ' + bookingData.to,
+    'Trip Type: ' + tripLabel,
+    'Departure: ' + dateStr + returnLine,
+    'Class: ' + clsLabel,
+    'Seats: ' + selectedSeats.join(', '),
+    'Passengers: ' + pax,
+    '',
+    'PASSENGER DETAILS',
+    paxLines,
+    'Contact Phone: ' + (passengers[0]?.phone || '') + emailLine,
+    '',
+    'FARE BREAKDOWN',
+    'Fare per seat: KES ' + seatFare.toLocaleString(),
+    'Subtotal (' + pax + ' pax): KES ' + totalFare.toLocaleString() + returnFareLine,
+    'TOTAL: KES ' + grandTotal.toLocaleString(),
+    '',
+    'Please share payment details to confirm.',
+    'Arrive 45 mins before departure for check-in.',
+    'Thank you for flying Safarilink Airline Aviation.'
+  ];
+
+  const msg = lines.join('\n');
+  const waURL = 'https://wa.me/254782431525?text=' + encodeURIComponent(msg);
+
+  buildItinerary(ref, passengers);
+  goToStep(4);
+  window.location.href = waURL;
+}
+</script>
+</body>
+</html>
